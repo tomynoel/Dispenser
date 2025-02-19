@@ -10,7 +10,7 @@
         #reader { width: 300px; margin: auto; }
         input, button { margin-top: 10px; padding: 10px; width: 80%; font-size: 16px; }
         button { background-color: #28a745; color: white; border: none; cursor: pointer; }
-        button:disabled { background-color: gray; }
+        button:disabled { background-color: gray; cursor: not-allowed; }
     </style>
 </head>
 <body>
@@ -26,17 +26,19 @@
     <p id="mensaje"></p>
 
     <script>
-        // ✅ URL del Apps Script corregida (reemplázala con la correcta)
+        // ✅ URL del Apps Script (reemplázala con la correcta)
         const sheetAPI = "https://script.google.com/macros/s/AKfycbyHEH_R7V38om7G8Jma10P0UBvuh1cfsI9PqbpWARj9iOSOdnP3FBPtrr8lCP9GeZd_/exec"; 
 
         let dispenserId = "";
+        const registrarBtn = document.getElementById("registrar");
+        const usuarioInput = document.getElementById("usuario");
 
         // Extraer ID del QR desde la URL (si se accede desde un QR)
         const urlParams = new URLSearchParams(window.location.search);
         if (urlParams.has('dispenser')) {
             dispenserId = urlParams.get('dispenser');
             document.getElementById("dispenserId").innerText = dispenserId;
-            document.getElementById("registrar").disabled = false;
+            registrarBtn.disabled = false;
             console.log("✅ QR detectado en URL:", dispenserId);
         }
 
@@ -44,7 +46,7 @@
         function onScanSuccess(qrCodeMessage) {
             dispenserId = qrCodeMessage;
             document.getElementById("dispenserId").innerText = dispenserId;
-            document.getElementById("registrar").disabled = false;
+            registrarBtn.disabled = false;
             console.log("✅ Código QR escaneado:", dispenserId);
         }
 
@@ -56,11 +58,22 @@
             "reader", { fps: 10, qrbox: 250 });
         html5QrcodeScanner.render(onScanSuccess, onScanError);
 
-        // Registrar datos en Google Sheets (Hoja "Registros")
-        document.getElementById("registrar").addEventListener("click", async () => {
-            let usuario = document.getElementById("usuario").value;
+        // **Corrección: Forzar la activación del botón cuando hay datos**
+        usuarioInput.addEventListener("input", () => {
+            if (usuarioInput.value.trim() !== "" && dispenserId !== "") {
+                registrarBtn.disabled = false;
+            } else {
+                registrarBtn.disabled = true;
+            }
+        });
+
+        // **Corrección: Verificar que el botón responde**
+        registrarBtn.addEventListener("click", async () => {
+            console.log("🛠 Botón 'Registrar Recarga' fue presionado");
+
+            let usuario = usuarioInput.value.trim();
             if (!usuario) {
-                alert("Por favor, ingresa tu nombre.");
+                alert("⚠️ Por favor, ingresa tu nombre.");
                 return;
             }
 
