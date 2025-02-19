@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -18,7 +17,6 @@
     <h1>Registro de Recarga de Agua</h1>
     <p><strong>Dispenser:</strong> <span id="dispenserId">Escanea un QR</span></p>
 
-    <!-- ✅ Corrección: el <input> ahora tiene id y name -->
     <label for="usuarioInput">Tu Nombre:</label>
     <input type="text" id="usuarioInput" name="usuario" placeholder="Ingresa tu nombre" autocomplete="name">
 
@@ -28,12 +26,13 @@
     <div id="reader"></div>
     <p id="mensaje"></p>
 
+    <!-- 🚀 Se mueve el script al final del <body> -->
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             console.log("🚀 Página cargada completamente");
 
-            // ✅ Reemplaza con tu URL de Google Apps Script
-            const sheetAPI = "https://script.google.com/macros/s/AKfycbyHEH_R7V38om7G8Jma10P0UBvuh1cfsI9PqbpWARj9iOSOdnP3FBPtrr8lCP9GeZd_/exec"; 
+            // ✅ Reemplaza con la URL de tu Google Apps Script
+            const sheetAPI = "https://script.google.com/macros/s/TU_URL_DEL_SCRIPT/exec"; 
 
             let dispenserId = "";
             const registrarBtn = document.getElementById("registrar");
