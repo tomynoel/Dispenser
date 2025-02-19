@@ -17,8 +17,9 @@
     <h1>Registro de Recarga de Agua</h1>
     <p><strong>Dispenser:</strong> <span id="dispenserId">Escanea un QR</span></p>
 
-    <label for="usuario">Tu Nombre:</label>
-    <input type="text" id="usuario" placeholder="Ingresa tu nombre">
+    <!-- ✅ Corrección: el atributo "for" en <label> ahora coincide con el "id" en <input> -->
+    <label for="usuarioInput">Tu Nombre:</label>
+    <input type="text" id="usuarioInput" name="usuario" placeholder="Ingresa tu nombre">
     <button id="registrar" disabled>Registrar Recarga</button>
 
     <h2>Escanea el Código QR</h2>
@@ -31,7 +32,7 @@
 
         let dispenserId = "";
         const registrarBtn = document.getElementById("registrar");
-        const usuarioInput = document.getElementById("usuario");
+        const usuarioInput = document.getElementById("usuarioInput");
 
         // Extraer ID del QR desde la URL (si se accede desde un QR)
         const urlParams = new URLSearchParams(window.location.search);
