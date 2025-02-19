@@ -26,12 +26,10 @@
     <div id="reader"></div>
     <p id="mensaje"></p>
 
-    <!-- 🚀 SE MOVIÓ EL SCRIPT AL FINAL DEL BODY -->
     <script>
         window.onload = function() {
             console.log("🚀 Página cargada completamente");
 
-            // ✅ Reemplaza con la URL de tu Google Apps Script
             const sheetAPI = "https://script.google.com/macros/s/AKfycbyHEH_R7V38om7G8Jma10P0UBvuh1cfsI9PqbpWARj9iOSOdnP3FBPtrr8lCP9GeZd_/exec"; 
 
             let dispenserId = "";
@@ -86,7 +84,6 @@
                 }
             });
 
-            // ✅ Escanear código QR con la cámara
             function onScanSuccess(qrCodeMessage) {
                 dispenserId = qrCodeMessage;
                 document.getElementById("dispenserId").innerText = dispenserId;
