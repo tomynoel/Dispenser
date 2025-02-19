@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -31,7 +32,7 @@
         document.addEventListener("DOMContentLoaded", function() {
             console.log("🚀 Página cargada completamente");
 
-            // ✅ URL del Apps Script (reemplázala con la correcta)
+            // ✅ Reemplaza con tu URL de Google Apps Script
             const sheetAPI = "https://script.google.com/macros/s/AKfycbyHEH_R7V38om7G8Jma10P0UBvuh1cfsI9PqbpWARj9iOSOdnP3FBPtrr8lCP9GeZd_/exec"; 
 
             let dispenserId = "";
@@ -81,11 +82,11 @@
                 }
             });
 
-            // 📌 Escanear código QR con la cámara
+            // ✅ Escanear código QR con la cámara
             function onScanSuccess(qrCodeMessage) {
                 dispenserId = qrCodeMessage;
                 document.getElementById("dispenserId").innerText = dispenserId;
-                registrarBtn.disabled = false;
+                verificarBoton();
                 console.log("✅ Código QR escaneado:", dispenserId);
             }
 
