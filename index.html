@@ -26,19 +26,24 @@
     <div id="reader"></div>
     <p id="mensaje"></p>
 
-    <!-- 🚀 Se mueve el script al final del <body> -->
+    <!-- 🚀 SE MOVIÓ EL SCRIPT AL FINAL DEL BODY -->
     <script>
-        document.addEventListener("DOMContentLoaded", function() {
+        window.onload = function() {
             console.log("🚀 Página cargada completamente");
 
             // ✅ Reemplaza con la URL de tu Google Apps Script
-            const sheetAPI = "https://script.google.com/macros/s/AKfycbz4UMwCBTLJyAgZt_dggVfS0DMBbI2jCvUfQFJ31NOL69S8wWDvkfnN4sfu3cLLdLcS/exec"; 
+            const sheetAPI = "https://script.google.com/macros/s/AKfycbyHEH_R7V38om7G8Jma10P0UBvuh1cfsI9PqbpWARj9iOSOdnP3FBPtrr8lCP9GeZd_/exec"; 
 
             let dispenserId = "";
             const registrarBtn = document.getElementById("registrar");
             const usuarioInput = document.getElementById("usuarioInput");
 
             console.log("📌 Elementos encontrados:", registrarBtn, usuarioInput);
+
+            if (!registrarBtn || !usuarioInput) {
+                console.error("❌ ERROR: No se encontraron los elementos en el DOM.");
+                return;
+            }
 
             function verificarBoton() {
                 console.log("🔄 Verificando si el botón debe estar habilitado...");
@@ -96,7 +101,7 @@
             let html5QrcodeScanner = new Html5QrcodeScanner(
                 "reader", { fps: 10, qrbox: 250 });
             html5QrcodeScanner.render(onScanSuccess, onScanError);
-        });
+        };
     </script>
 </body>
 </html>
