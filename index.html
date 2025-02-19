@@ -1,102 +1,50 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registro de Recarga</title>
-    <script src="https://unpkg.com/html5-qrcode"></script>
-    <style>
-        body { font-family: Arial, sans-serif; text-align: center; margin: 20px; }
-        #reader { width: 300px; margin: auto; }
-        input, button { margin-top: 10px; padding: 10px; width: 80%; font-size: 16px; }
-        button { background-color: #28a745; color: white; border: none; cursor: pointer; }
-        button:disabled { background-color: gray; cursor: not-allowed; }
-    </style>
-</head>
-<body>
-    <h1>Registro de Recarga de Agua</h1>
-    <p><strong>Dispenser:</strong> <span id="dispenserId">Escanea un QR</span></p>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const sheetAPI = "https://script.google.com/macros/s/AKfycbyHEH_R7V38om7G8Jma10P0UBvuh1cfsI9PqbpWARj9iOSOdnP3FBPtrr8lCP9GeZd_/exec"; 
 
-    <!-- ✅ Corrección: el <input> ahora tiene id y name -->
-    <label for="usuarioInput">Tu Nombre:</label>
-    <input type="text" id="usuarioInput" name="usuario" placeholder="Ingresa tu nombre" autocomplete="name">
+    let dispenserId = "";
+    const registrarBtn = document.getElementById("registrar");
+    const usuarioInput = document.getElementById("usuarioInput");
 
-    <button id="registrar" disabled>Registrar Recarga</button>
-
-    <h2>Escanea el Código QR</h2>
-    <div id="reader"></div>
-    <p id="mensaje"></p>
-
-    <script>
-        // ✅ URL del Apps Script (reemplázala con la correcta)
-        const sheetAPI = "https://script.google.com/macros/s/AKfycbyHEH_R7V38om7G8Jma10P0UBvuh1cfsI9PqbpWARj9iOSOdnP3FBPtrr8lCP9GeZd_/exec"; 
-
-        let dispenserId = "";
-        const registrarBtn = document.getElementById("registrar");
-        const usuarioInput = document.getElementById("usuarioInput");
-
-        // Extraer ID del QR desde la URL (si se accede desde un QR)
-        const urlParams = new URLSearchParams(window.location.search);
-        if (urlParams.has('dispenser')) {
-            dispenserId = urlParams.get('dispenser');
-            document.getElementById("dispenserId").innerText = dispenserId;
+    function verificarBoton() {
+        console.log("🔄 Verificando si el botón debe estar habilitado...");
+        if (usuarioInput.value.trim() !== "" && dispenserId !== "") {
             registrarBtn.disabled = false;
-            console.log("✅ QR detectado en URL:", dispenserId);
+            console.log("✅ Botón habilitado");
+        } else {
+            registrarBtn.disabled = true;
+            console.log("❌ Botón deshabilitado");
+        }
+    }
+
+    usuarioInput.addEventListener("input", verificarBoton);
+
+    registrarBtn.addEventListener("click", async () => {
+        console.log("🛠 Botón 'Registrar Recarga' fue presionado");
+
+        let usuario = usuarioInput.value.trim();
+        if (!usuario) {
+            alert("⚠️ Por favor, ingresa tu nombre.");
+            return;
         }
 
-        // Escanear código QR con la cámara
-        function onScanSuccess(qrCodeMessage) {
-            dispenserId = qrCodeMessage;
-            document.getElementById("dispenserId").innerText = dispenserId;
-            registrarBtn.disabled = false;
-            console.log("✅ Código QR escaneado:", dispenserId);
+        const requestData = { dispenser: dispenserId, usuario };
+        console.log("📤 Enviando datos:", requestData);
+
+        try {
+            const response = await fetch(sheetAPI, {
+                method: "POST",
+                body: JSON.stringify(requestData),
+                headers: { "Content-Type": "application/json" }
+            });
+
+            const responseData = await response.text();
+            console.log("✅ Respuesta del servidor:", responseData);
+            document.getElementById("mensaje").innerText = responseData;
+        } catch (error) {
+            console.error("❌ Error al enviar datos:", error);
+            document.getElementById("mensaje").innerText = "Error al registrar. Intenta de nuevo.";
         }
-
-        function onScanError(errorMessage) {
-            console.warn("⚠️ Error escaneando QR:", errorMessage);
-        }
-
-        let html5QrcodeScanner = new Html5QrcodeScanner(
-            "reader", { fps: 10, qrbox: 250 });
-        html5QrcodeScanner.render(onScanSuccess, onScanError);
-
-        // **Corrección: Forzar la activación del botón cuando hay datos**
-        usuarioInput.addEventListener("input", () => {
-            if (usuarioInput.value.trim() !== "" && dispenserId !== "") {
-                registrarBtn.disabled = false;
-            } else {
-                registrarBtn.disabled = true;
-            }
-        });
-
-        // **Corrección: Verificar que el botón responde y envía datos**
-        registrarBtn.addEventListener("click", async () => {
-            console.log("🛠 Botón 'Registrar Recarga' fue presionado");
-
-            let usuario = usuarioInput.value.trim();
-            if (!usuario) {
-                alert("⚠️ Por favor, ingresa tu nombre.");
-                return;
-            }
-
-            const requestData = { dispenser: dispenserId, usuario };
-            console.log("📤 Enviando datos:", requestData);
-
-            try {
-                const response = await fetch(sheetAPI, {
-                    method: "POST",
-                    body: JSON.stringify(requestData),
-                    headers: { "Content-Type": "application/json" }
-                });
-
-                const responseData = await response.text();
-                console.log("✅ Respuesta del servidor:", responseData);
-                document.getElementById("mensaje").innerText = responseData;
-            } catch (error) {
-                console.error("❌ Error al enviar datos:", error);
-                document.getElementById("mensaje").innerText = "Error al registrar. Intenta de nuevo.";
-            }
-        });
-    </script>
-</body>
-</html>
+    });
+});
+</script>
