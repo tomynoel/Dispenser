@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro de Recarga</title>
+    <script src="https://unpkg.com/html5-qrcode"></script>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; margin: 20px; }
+        #reader { width: 300px; margin: auto; }
+        input, button { margin-top: 10px; padding: 10px; width: 80%; font-size: 16px; }
+        button { background-color: #28a745; color: white; border: none; cursor: pointer; }
+        button:disabled { background-color: gray; }
+    </style>
+</head>
+<body>
+    <h1>Registro de Recarga de Agua</h1>
+    <p><strong>Dispenser:</strong> <span id="dispenserId">Escanea un QR</span></p>
+
+    <label for="usuario">Tu Nombre:</label>
+    <input type="text" id="usuario" placeholder="Ingresa tu nombre">
+    <button id="registrar" disabled>Registrar Recarga</button>
+
+    <h2>Escanea el Código QR</h2>
+    <div id="reader"></div>
+    <p id="mensaje"></p>
+
+    <script>
+        const sheetAPI = "TU_URL_DEL_SCRIPT"; // 👉 Reemplaza con la URL de tu Google Apps Script
+
+        let dispenserId = "";
+
+        // Extraer ID del QR desde la URL (si se accede desde un QR)
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.has('dispenser')) {
+            dispenserId = urlParams.get('dispenser');
+            document.getElementById("dispenserId").innerText = dispenserId;
+            document.getElementById("registrar").disabled = false;
+        }
+
+        // Escanear código QR con la cámara
+        function onScanSuccess(qrCodeMessage) {
+            dispenserId = qrCodeMessage;
+            document.getElementById("dispenserId").innerText = dispenserId;
+            document.getElementById("registrar").disabled = false;
+        }
+
+        function onScanError(errorMessage) {
+            console.warn(errorMessage);
+        }
+
+        let html5QrcodeScanner = new Html5QrcodeScanner(
+            "reader", { fps: 10, qrbox: 250 });
+        html5QrcodeScanner.render(onScanSuccess, onScanError);
+
+        // Registrar datos en Google Sheets
+        document.getElementById("registrar").addEventListener("click", () => {
+            let usuario = document.getElementById("usuario").value;
+            if (!usuario) {
+                alert("Por favor, ingresa tu nombre.");
+                return;
+            }
+
+            fetch(sheetAPI, {
+                method: "POST",
+                body: JSON.stringify({ dispenser: dispenserId, usuario }),
+                headers: { "Content-Type": "application/json" }
+            }).then(response => response.text())
+              .then(data => {
+                  document.getElementById("mensaje").innerText = "Registro exitoso!";
+              }).catch(error => console.error(error));
+        });
+    </script>
+</body>
+</html>
