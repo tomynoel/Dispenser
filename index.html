@@ -53,7 +53,7 @@
             "reader", { fps: 10, qrbox: 250 });
         html5QrcodeScanner.render(onScanSuccess, onScanError);
 
-        // Registrar datos en Google Sheets
+        // Registrar datos en Google Sheets (Hoja "Registros")
         document.getElementById("registrar").addEventListener("click", () => {
             let usuario = document.getElementById("usuario").value;
             if (!usuario) {
@@ -73,3 +73,4 @@
     </script>
 </body>
 </html>
+
